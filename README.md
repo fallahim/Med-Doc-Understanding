@@ -11,7 +11,7 @@ This repository hosts a collection of tools and models for medical document unde
 - Gradio API for interacting with the models and tools.
 
 ## Directory Structure
-.
+"""
 ├── data/ # Directory for storing sample medical documents
 │ ├── example_doc1.pdf # Sample medical document 1
 │ ├── example_doc2.pdf # Sample medical document 2
@@ -34,3 +34,4 @@ This repository hosts a collection of tools and models for medical document unde
 ├── requirements.txt # Python dependencies required for the project
 ├── README.md # Project documentation
 └── LICENSE # License information
+"""
