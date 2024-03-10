@@ -6,6 +6,9 @@ This repository hosts a collection of tools and models for medical document unde
 
 ## Features
 
+
+
+
 - Optical Character Recognition (OCR) for extracting text from medical documents.
 - Large Language Model (LLM) for analyzing the extracted text.
 - Gradio API for interacting with the models and tools.
