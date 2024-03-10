@@ -1,0 +1,105 @@
+import pdfplumber
+import easyocr
+from PIL import Image
+from pdf2image import convert_from_path
+import pdfplumber
+import easyocr
+from PIL import Image
+import numpy as np
+
+class OCRProcessor:
+    """
+    A class for performing Optical Character Recognition (OCR) on PDF or image files.
+    """
+
+    def __init__(self, file_path):
+        """
+        Initialize the OCRProcessor object.
+
+        Parameters:
+        - file_path (str): The path to the PDF or image file.
+        """
+        self.file_path = file_path
+        self.pages = []
+
+    def read_pdf_or_image(self):
+        """
+        Read the PDF or image file and extract text from each page.
+
+        If the file is a PDF, extract text from each page separately using EasyOCR.
+        If the file is an image, extract text from the image.
+        """
+        
+        reader = easyocr.Reader(['en'])
+        if self.file_path.endswith('.pdf') or self.file_path.endswith('.PDF')  :
+            pages = convert_from_path(self.file_path)
+            for page in pages:
+                self.pages.append(reader.readtext(np.array(page)))
+        else:
+            
+            self.pages.append(reader.readtext(self.file_path))
+        
+                
+
+
+    def preprocess(self):
+   
+        pass
+
+    def extract_text(self):
+        """
+        Extract text from each page using EasyOCR.
+        """
+        reader = easyocr.Reader(['en'])
+        for i, page in enumerate(self.pages):
+            if isinstance(page, str):
+                self.pages[i] = reader.readtext(page)
+            else:
+                text = ""
+                for result in page:
+                    text += result[1] + " "
+                self.pages[i] = text
+
+    def concatenate_text(self):
+        """
+        Concatenate text extracted from each page into a single string.
+
+        Returns:
+        - concatenated_text (str): The concatenated text from all pages.
+        """
+        concatenated_text = ""
+        for page_text in self.pages:
+            if isinstance(page_text, list):
+                for result in page_text:
+                    concatenated_text += result[1] + " "
+            else:
+                concatenated_text += page_text + "\n"
+        return concatenated_text
+
+    def export_text(self):
+        """
+        Export extracted text to separate text files for each page.
+        """
+        for i, page_text in enumerate(self.pages):
+            with open(f"page_{i+1}_text.txt", "w") as file:
+                if isinstance(page_text, list):
+                    for result in page_text:
+                        file.write(result[1] + "\n")
+                else:
+                    file.write(page_text)
+
+if __name__ == "__main__":
+    file_path = "/home/deep/projects/Med-Doc-Understanding/data/sample_docs/eng_img/test.PDF"
+    ocr_processor = OCRProcessor(file_path)
+    ocr_processor.read_pdf_or_image()
+    ocr_processor.preprocess()
+    ocr_processor.extract_text()
+
+    concatenated_text = ocr_processor.concatenate_text()
+    print("Concatenated Text:")
+    print(concatenated_text)
+
+    export_choice = input("Do you want to export text? (yes/no): ").lower()
+    if export_choice == "yes":
+        ocr_processor.export_text()
+        print("Text exported successfully.")
